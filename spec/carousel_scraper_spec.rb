@@ -9,6 +9,11 @@ RSpec.describe CarouselScraper do
       scraped_elements = carousel_html.css_scrape('div g-scrolling-carousel div>a')
       expect(scraped_elements.length).to be > 0
     end
+
+    it 'should find at least one artwork' do
+      artworks = carousel_html.get_artworks_json
+      expect(artworks[:artworks].length).to be > 0
+    end
   end
 
   describe 'Regex tests' do
