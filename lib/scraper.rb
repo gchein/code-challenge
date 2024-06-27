@@ -8,8 +8,8 @@ class Scraper
   attr_reader :url
 
   def initialize(params = {})
-    @url = params[:url]
-    @parsed_html = get_parsed_html
+    @url = params[:url] if params.key?(:url)
+    @parsed_html = get_parsed_html if params.key?(:url) || !params[:allow_nil_url]
   end
 
   # Instance Method for scraping the HTML page, given a CSS selector

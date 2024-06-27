@@ -3,8 +3,10 @@ require_relative 'scraper'
 class CarouselScraper < Scraper
   def initialize(params = {})
     super(params)
-    @carousel_element = css_scrape('div g-scrolling-carousel')
-    @artwork_array = Scraper.element_css_scrape(@carousel_element, 'a')
+    if params.key?(:url)
+      @carousel_element = css_scrape('div g-scrolling-carousel')
+      @artwork_array = Scraper.element_css_scrape(@carousel_element, 'a')
+    end
   end
 
   def get_artworks_json

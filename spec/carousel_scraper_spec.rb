@@ -24,12 +24,11 @@ RSpec.describe CarouselScraper do
     }
   end
 
-  let(:url) { 'files/van-gogh-paintings.html' }
-  let(:parsed_html) { CarouselScraper.new(url:) }
+  let(:blank_scraper) { CarouselScraper.new(allow_nil_url: true) }
 
   it 'should have valid Regex to extract data' do
     regex_tests[:test_strings].each_with_index do |string, index|
-      title_year_hash = parsed_html.extract_title_and_year(string)
+      title_year_hash = blank_scraper.extract_title_and_year(string)
 
       title = title_year_hash[:title]
       expect(title).to eq(regex_tests[:correct_titles][index])
