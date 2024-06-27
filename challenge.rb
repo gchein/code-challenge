@@ -4,3 +4,4 @@ url = 'files/van-gogh-paintings.html'
 searchpage = CarouselScraper.new(url:)
 
 searchpage.get_artworks_json
+p searchpage.artworks

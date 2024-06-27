@@ -6,7 +6,7 @@ RSpec.describe CarouselScraper do
     let(:carousel_html) { CarouselScraper.new(url:) }
 
     it 'should have a valid carousel element' do
-      scraped_elements = carousel_html.css_scrape('div g-scrolling-carousel')
+      scraped_elements = carousel_html.css_scrape('div g-scrolling-carousel div>a')
       expect(scraped_elements.length).to be > 0
     end
   end
@@ -20,7 +20,7 @@ RSpec.describe CarouselScraper do
           'The Starry Night (1889)',
           'Vitruvian Man (by Leonardo da Vinci, circa 1490)'
         ],
-        correct_titles:
+        correct_names:
         [
           'Guernica',
           'The Starry Night',
@@ -28,9 +28,9 @@ RSpec.describe CarouselScraper do
         ],
         correct_years:
         [
-          1937,
-          1889,
-          1490
+          '1937',
+          '1889',
+          '1490'
         ]
       }
     end
@@ -39,12 +39,12 @@ RSpec.describe CarouselScraper do
 
     it 'should have valid Regex to extract data' do
       regex_tests[:test_strings].each_with_index do |string, index|
-        title_year_hash = blank_scraper.extract_title_and_year(string)
+        name_year_hash = blank_scraper.extract_name_and_year(string)
 
-        title = title_year_hash[:title]
-        expect(title).to eq(regex_tests[:correct_titles][index])
+        name = name_year_hash[:name]
+        expect(name).to eq(regex_tests[:correct_names][index])
 
-        year = title_year_hash[:year]
+        year = name_year_hash[:year]
         expect(year).to eq(regex_tests[:correct_years][index])
       end
 

@@ -1,5 +1,4 @@
 require 'scraper'
-require 'pry-byebug'
 
 RSpec.describe Scraper do
   let(:url) { 'files/van-gogh-paintings.html' }
@@ -20,7 +19,7 @@ RSpec.describe Scraper do
   end
 
   it 'should be able to scrape given HTML elements' do
-    carousel_element = parsed_html.css_scrape('div g-scrolling-carousel')
+    carousel_element = parsed_html.css_scrape('div g-scrolling-carousel div>a')
     anchor_tags = Scraper.element_css_scrape(carousel_element, 'a')
     expect(anchor_tags.length).to be > 0
   end

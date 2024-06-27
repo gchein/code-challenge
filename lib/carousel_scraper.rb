@@ -1,56 +1,87 @@
 require_relative 'scraper'
 
 class CarouselScraper < Scraper
+attr_reader :artworks
+
   def initialize(params = {})
     super(params)
     if params.key?(:url)
-      @carousel_element = css_scrape('div g-scrolling-carousel')
+      @carousel_element = css_scrape('div g-scrolling-carousel div>a')
       @artwork_array = Scraper.element_css_scrape(@carousel_element, 'a')
     end
   end
 
   def get_artworks_json
-    test_artwork = @artwork_array.first
-
-    google_link = "https://www.google.com#{test_artwork.attribute('href').value}"
-
-    full_title = test_artwork.attribute('title').value
-    title_year_hash = extract_title_and_year(full_title)
-
-    img = Scraper.element_css_scrape(test_artwork, 'img')
-    img_id = img.attribute('id').value
-
-    image = get_image_source(img_id)
+    @artworks = @artwork_array.map do |artwork|
+      create_artwork(artwork)
+    end
+    {artworks: @artworks}
   end
 
 
-  def extract_title_and_year(full_title)
-    match_data = full_title.match(title_year_regex_pattern)
+  def extract_name_and_year(full_title)
+    name_year_hash = {}
+    match_data = full_title.match(name_year_regex_pattern)
 
-    title = match_data[:title].split(' (').first
-    year = match_data[:year].chomp(')').to_i
+    if !match_data.nil?
+      name = match_data[:name].split(' (').first
+      name_year_hash[:name] = name
 
-    {
-      title:,
-      year:
-    }
+      year = match_data[:year].chomp(')')
+      name_year_hash[:year] = year
+    end
+
+
+    name_year_hash
   end
 
   private
 
+  def create_artwork(artwork)
+    artwork_hash = {}
+
+    full_title = artwork.attribute('title').value
+    name_year_hash = extract_name_and_year(full_title)
+
+    if name_year_hash.empty?
+      name = artwork.attribute('aria-label').value
+    else
+      name = name_year_hash[:name]
+    end
+    artwork_hash[:name] = name
+
+    if name_year_hash.key?(:year)
+      year = name_year_hash[:year]
+      artwork_hash[:extensions] = [year]
+    end
+
+    link = "https://www.google.com#{artwork.attribute('href').value}"
+    artwork_hash[:link] = link
+
+    img = Scraper.element_css_scrape(artwork, 'img')
+    img_id = img.attribute('id').value
+
+    image = get_image_source(img_id)
+    artwork_hash[:image] = image
+
+    artwork_hash
+  end
+
   def get_image_source(img_id)
+    img_source = nil
     script_content = css_scrape('script').find { |script_tag| script_tag.content.include?('_setImagesSrc') }.content
     ar = script_content.split('(function(){')
     ar.each do |element|
-      if element.include?(img_id)
-        return script_content.match(image_source_regexp)[:source]
+      if img_source.nil? && element.include?(img_id)
+        img_source = script_content.match(image_source_regexp)[:source]
       end
     end
+    img_source
   end
 
-  def title_year_regex_pattern
-    # Looks for any positive number of either an alphabet letter or whitespace, finalizing with a literal '(', and groups it
-    title_pattern = '(?<title>[a-z|\s]+\()'
+  def name_year_regex_pattern
+    # Looks for any characters, finalizing with a literal '(', and groups it
+    name_pattern = '(?<name>[\S|\s]+\()'
 
     # Looks for any quantity of single characters, located between the other two specific Regex patterns, and groups it
     middle_portion_pattern = '(?<middle_portion>.*?)'
@@ -59,7 +90,7 @@ class CarouselScraper < Scraper
     year_pattern =  '(?<year>\d+\))'
 
     # Case insentive concatenation of patterns
-    /#{title_pattern}#{middle_portion_pattern}#{year_pattern}/i
+    /#{name_pattern}#{middle_portion_pattern}#{year_pattern}/i
   end
 
   def image_source_regexp
