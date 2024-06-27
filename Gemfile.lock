@@ -6,18 +6,7 @@ GEM
     date (3.3.4)
     diff-lcs (1.5.1)
     method_source (1.1.0)
-    nokogiri (1.16.6-aarch64-linux)
-      racc (~> 1.4)
-    nokogiri (1.16.6-arm-linux)
-      racc (~> 1.4)
-    nokogiri (1.16.6-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.6-x86-linux)
-      racc (~> 1.4)
-    nokogiri (1.16.6-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.6-x86_64-linux)
-      racc (~> 1.4)
+    nokolexbor (0.5.4-x86_64-linux)
     open-uri (0.4.1)
       stringio
       time
@@ -28,7 +17,6 @@ GEM
     pry-byebug (3.10.1)
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
-    racc (1.8.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -48,15 +36,10 @@ GEM
     uri (0.13.0)
 
 PLATFORMS
-  aarch64-linux
-  arm-linux
-  arm64-darwin
-  x86-linux
-  x86_64-darwin
   x86_64-linux
 
 DEPENDENCIES
-  nokogiri
+  nokolexbor
   open-uri
   pry-byebug
   rspec (~> 3.4)

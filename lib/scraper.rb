@@ -27,6 +27,6 @@ class Scraper
   # Retrieves the parsed HTML based on the URL given, utilizing Nokogiri
   def get_parsed_html
     html_file = URI.open(@url).read
-    Nokogiri::HTML.parse(html_file)
+    Nokolexbor::HTML(html_file)
   end
 end
